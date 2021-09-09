@@ -8,20 +8,23 @@ const TipoUsu = require('../../database/models/tipoUsuario');
 const bcrypt = require('bcryptjs');
 const tipoDoc = require('../../database/models/tipoDoc');
 
+const middelware = require('../middelwares')
+
 //Consulta X id Para la Actualizacion
-router.get('/id/:idUsuario', async (req, res) => {
+router.get('/id/:idUsuario', middelware.comprobarFeligres, async (req, res) => {
     const usuario = await Usuarios.findByPk(req.params.idUsuario, {
         include: {
             model: Credenciales,
             attributes: ['username']
             },
         attributes: ['idUsuario','nombreUsuario','apellidoUsuario','correoUsuario','numeroDocumentoUsuario','fechaNacimientoUsuario', 'idTipoDoc_FK', 'estadoUsuario']
-    }) 
-     res.json(usuario);
+    })
+   
+     res.status(201).json(usuario);
 })
 
 //consultar todos los usuarios
-router.get('/', async(req, res) => {
+router.get('/',middelware.checkToken,middelware.comprobarFeligres, async (req, res) => {
     const usuarios = await Usuarios.findAll(
         {
         where: {estadoUsuario:'Activo' },
@@ -44,10 +47,10 @@ router.get('/', async(req, res) => {
         res.json({mensage:"error al Consultar los Usuarios",err});
    });
    
-     res.json(usuarios);
+     res.status(201).json(usuarios);
 });
 
-router.get('/inactivos', async (req, res) => {
+router.get('/inactivos',middelware.comprobarFeligres, async (req, res) => {
     const usuarios = await Usuarios.findAll(
         {
         where: {estadoUsuario:'Inactivo' },
@@ -98,7 +101,7 @@ router.post('/', async (req, res) => {
        idUsuario_FK: usuario.idUsuario
    });
     
-    res.status(201).json({ usuario, success:'Usuario Creado Con Exito' });
+    res.status(200).json({ usuario, success:'Usuario Creado Con Exito' });
      }else{
          res.json({err:"El username ya existe"});
     }
@@ -132,7 +135,7 @@ router.put('/actualizar/:idUsuario', async (req, res) => {
 });
 
 //CAMBIAR TIPO USU
-router.put('/tipoUsu/:idUsuario', async(req, res) => {
+router.put('/tipoUsu/:idUsuario',middelware.comprobarFeligres, async(req, res) => {
     const usuario = await Usuarios.update({
         idTipoUsuario_FK: req.body.idTipoUsuario_FK
     }, {
@@ -148,7 +151,7 @@ router.put('/tipoUsu/:idUsuario', async(req, res) => {
 
 
 // INHABILITAR
-router.put('/inhabilitar/:idUsuario', async(req, res) => {
+router.put('/inhabilitar/:idUsuario',middelware.comprobarFeligres, async(req, res) => {
     const usuario = await Usuarios.update({
         estadoUsuario : 'Inactivo'
     }, {
@@ -163,7 +166,7 @@ router.put('/inhabilitar/:idUsuario', async(req, res) => {
      res.status(201).json({success: 'El Usuario a sido inactivado'});
 });
 // Activar
-router.put('/activar/:idUsuario', async(req, res) => {
+router.put('/activar/:idUsuario',middelware.comprobarFeligres, async(req, res) => {
     const usuario = await Usuarios.update({
         estadoUsuario : 'Activo'
     }, {

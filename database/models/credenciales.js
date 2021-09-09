@@ -11,16 +11,13 @@ Credenciales.init({
     username: {
         type: DataTypes.STRING(20),
         allowNull: false,
-        unique: true
+        unique: {
+            args: true,
+            msg: "El dato Usuario ya existe"
+        } 
     },
     password: {
         type: DataTypes.STRING(250),
-        validate: {
-            is: {
-                args: /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/,
-                msg:"La contraseña debe tener min 8 caracteres, 1 Letra mayuscula, 1 Minuscula y un simbolo"
-            },
-        },
         allowNull: false
     },
     estado: {

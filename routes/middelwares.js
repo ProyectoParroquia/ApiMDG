@@ -2,27 +2,40 @@ const jwt = require('jwt-simple')
 const moment = require('moment');
 
 const checkToken = (req, res, next) => {
-    if (!req.headers['credencial-token']) {
-        return  res.json({error: "Necesitas incluir la credencial en la cabecera"});
+
+    if (!req.headers['token']) {
+        return  res.status(403).json({error: "Necesitas incluir el token"});
     }
-/* 
-const tokenCredencial=req.headers['credencial-token'] */
+
+    const token = req.headers['token'];
+    
     let payload = {};
+    
     try {
-        payload = jwt.decode(tokenCredencial,'SACRIS');
-        
+        payload = jwt.decode(token, "SACRIS");
     } catch (e) {
-        return  res.json({error:'token erroneo'});
+        return  res.status(403).json({error:'token erroneo'});
     }
 
     if (payload.expiredAt < moment().unix()) {
-        return  res.json({error:'el token ha expirado'});
+        return  res.status(403).json({error:`el token usado ya expiro`});
     }
 
-    req.credencialId = payload.credencialId;
+    req.nombreUsu = payload.nombre;
+    req.tipoUsuario = payload.tipoUsuario
+    
     next();
 }
 
+
+const comprobarFeligres = (req, res, next) => {
+    if (req.tipoUsuario == 3 ) {
+        res.status(403).json({ error:"Eres un Feligres, no tienes acceso a esta accion"});
+    } else {
+        next();
+    }
+}
 module.exports = {
-    checkToken:checkToken
+    checkToken: checkToken,
+    comprobarFeligres: comprobarFeligres
 }

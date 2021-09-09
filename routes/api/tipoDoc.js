@@ -1,6 +1,7 @@
 const router = require('express').Router();
 
 const TipoDoc = require('../../database/models/tipoDoc');
+const middelware = require('../middelwares');
 
 //Consulta X id Para la Actualizacion
 router.get('/id/:idTipoDoc', async (req, res) => {
@@ -19,7 +20,7 @@ router.get('/', async (req, res) => {
 
 
 // CREATE 
-router.post('/', async (req, res) => {
+router.post('/',middelware.comprobarFeligres, async (req, res) => {
      
    const tipoDocumento = await TipoDoc.create(  {
        denominacionTipoDocumento: req.body.denominacionTipoDocumento,
@@ -33,7 +34,7 @@ router.post('/', async (req, res) => {
 });
 
 // UPDATE
-router.put('/actualizar/:idTiDoc', async(req, res) => {
+router.put('/actualizar/:idTiDoc',middelware.comprobarFeligres, async(req, res) => {
     const tipoDocumento = await TipoDoc.update({
         denominacionTipoDocumento: req.body.denominacionTipoDocumento,
         
@@ -47,7 +48,7 @@ router.put('/actualizar/:idTiDoc', async(req, res) => {
      res.status(201).json({success:"Tipo Documento Actualizado con exito"});
 });
 
-router.delete('/:idTiDoc', async(req, res) => {
+router.delete('/:idTiDoc',middelware.comprobarFeligres, async(req, res) => {
     await TipoDoc.destroy({
         where: { idTipoDocumento: req.params.idTiDoc}
     }).catch(err=>{

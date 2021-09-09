@@ -12,7 +12,7 @@ const apiServicioRouter = require('./api/servicio');
 const apiServicioUsuarioRouter = require('./api/serviUsu');
 const apiTipoServicioUsuarioRouter = require('./api/tipoServi');
 
-const middleware = require('./middelwares');
+const middelware = require('./middelwares');
 
 router.use('/InscripcionRoute', apiIncripcionRouter);
 router.use('/TipoCursoRoute', apiTipoCursoRouter);
@@ -22,9 +22,9 @@ router.use('/Anuncio', apiAnuncioRouter);
 
 
 
-router.use('/usuarios',/*  middleware.checkToken , */ apiUsuariosRouter);
-router.use('/tipoUsuario', apitipoUsuarioRouter);
-router.use('/tipoDoc', apitipoDocRouter);
+router.use('/usuarios',/* middelware.checkToken, */ apiUsuariosRouter);
+router.use('/tipoUsuario'/* ,middelware.checkToken */, apitipoUsuarioRouter);
+router.use('/tipoDoc',/* middelware.checkToken, */ apitipoDocRouter);
 router.use('/credenciales', apiCredencialesRouter);
 
 router.use('/servicio', apiServicioRouter);

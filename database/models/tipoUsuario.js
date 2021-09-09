@@ -18,7 +18,10 @@ tipoUsuario.init({
             }, 
         },
         allowNull: false,
-        unique: true
+        unique: {
+            args: true,
+            msg:"El Tipo de Usuario ingresado ya existe"
+        } ,
     }
 }, {
     sequelize,

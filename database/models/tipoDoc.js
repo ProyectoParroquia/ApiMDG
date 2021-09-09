@@ -18,7 +18,10 @@ tipoDoc.init({
             }, 
         },
         allowNull: false,
-        unique: true
+        unique: {
+            args: true,
+            msg:"El Tipo de Documento ingresado ya existe"
+        } ,
     }
 }, {
     sequelize,

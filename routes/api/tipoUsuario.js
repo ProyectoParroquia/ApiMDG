@@ -4,6 +4,7 @@ const router = require('express').Router();
 const TipoUsu = require('../../database/models/tipoUsuario');
 const Usuarios = require('../../database/models/usuario');
 const bcrypt = require('bcryptjs')
+const middelware = require('../middelwares')
 
 //Consulta X id Para la Actualizacion
 router.get('/id/:idTiUsuario', async (req, res) => {
@@ -22,7 +23,7 @@ router.get('/', async (req, res) => {
 
 
 // CREATE 
-router.post('/', async (req, res) => {
+router.post('/',middelware.comprobarFeligres, async (req, res) => {
      
    const tipoUsuario = await TipoUsu.create(  {
        nombreTipoUsuario: req.body.nombreTipoUsuario,
@@ -36,7 +37,7 @@ router.post('/', async (req, res) => {
 });
 
 // UPDATE
-router.put('/actualizar/:idTiUsuario', async(req, res) => {
+router.put('/actualizar/:idTiUsuario',middelware.comprobarFeligres, async(req, res) => {
     const tipoUsuario = await TipoUsu.update({
         nombreTipoUsuario: req.body.nombreTipoUsuario,
         
@@ -52,7 +53,7 @@ router.put('/actualizar/:idTiUsuario', async(req, res) => {
 
 
 
-router.delete('/:idTiUsuario', async(req, res) => {
+router.delete('/:idTiUsuario',middelware.comprobarFeligres, async(req, res) => {
     await TipoUsu.destroy({
         where: { idTipoUsuario: req.params.idTiUsuario}
     }).catch(err=>{

@@ -18,22 +18,22 @@ Usuarios.init({
     },
     nombreUsuario: {
         type: DataTypes.STRING(25),
-        validate: {
+        /* validate: {
             isAlpha: {
                 args: true,
                msg:"El campo Nombre solo debe tener Letras" 
             }, 
-        },
+        }, */
         allowNull: false
     },
     apellidoUsuario: {
         type: DataTypes.STRING(25),
-        validate: {
+        /* validate: {
             isAlpha: {
                 args: true,
                msg:"El campo Apellido solo debe tener Letras" 
             }, 
-        },
+        }, */
         allowNull: false
     },
     
@@ -45,7 +45,10 @@ Usuarios.init({
                 msg: "El campo tiene que ser un correo valido"
             }
         },
-        unique: true,
+        unique: {
+            args: true,
+            msg:"El correo ya existe"
+        } ,
         allowNull: false
     },
 
@@ -57,10 +60,14 @@ Usuarios.init({
                 msg:"Solo se permiten Numeros en NumDoc"
             },
             len: {
-                args: [7,11],
-                msg:"NumDoc con minimo 7 y max 11 caracteres"
+                args: [5,11],
+                msg:"NumDoc con minimo 5 y max 11 caracteres"
             }
         },
+         unique: {
+            args: true,
+            msg:"El numero de documento ya existe"
+        } ,
         allowNull: false
     },
 

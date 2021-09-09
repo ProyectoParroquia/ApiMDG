@@ -1,6 +1,7 @@
 const router = require('express').Router();
 
 const Credenciales = require('../../database/models/credenciales');
+const Usuarios = require('../../database/models/usuario');
 
 const bcrypt = require('bcryptjs');
 const moment = require('moment');
@@ -12,7 +13,13 @@ router.post('/login', async(req, res) => {
     if (credencial) {
         const igual = bcrypt.compareSync(req.body.password, credencial.password);
         if (igual) {
-            res.status(201).json({ success: createToken(credencial) });
+            if (credencial.estado) {
+                const usuario = await Usuarios.findOne({ where: { idUsuario: credencial.idUsuario_FK  } });
+                
+                res.status(201).json({ success: createToken(usuario) }); 
+            } else {
+                 res.json({error:"No Se Puede Acceder Al Sistema Usuario Inactivo"});
+            }
         } else {
              res.json({error:"error en usuario o contraseña" });
         }
@@ -21,9 +28,10 @@ router.post('/login', async(req, res) => {
     }
 });
 
-const createToken = (credencial) => {
+const createToken = (usuario) => {
     const payload = {
-        credencialId: credencial.credencialId,
+        nombre: usuario.nombreUsuario,
+        tipoUsuario: usuario.idTipoUsuario_FK,
         createAt: moment().unix(),
         expiredAt: moment().add(45,'minutes').unix()
     }
