@@ -22,7 +22,7 @@ router.use('/Anuncio', apiAnuncioRouter);
 
 
 
-router.use('/usuarios',/* middelware.checkToken, */ apiUsuariosRouter);
+router.use('/usuarios'/* ,middelware.checkToken */, apiUsuariosRouter);
 router.use('/tipoUsuario'/* ,middelware.checkToken */, apitipoUsuarioRouter);
 router.use('/tipoDoc',/* middelware.checkToken, */ apitipoDocRouter);
 router.use('/credenciales', apiCredencialesRouter);
