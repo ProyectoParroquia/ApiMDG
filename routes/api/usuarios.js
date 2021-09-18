@@ -101,7 +101,7 @@ router.post('/', async (req, res) => {
        idUsuario_FK: usuario.idUsuario
    });
     
-    res.status(200).json({ usuario, success:'Usuario Creado Con Exito' });
+    res.status(201).json({ usuario, success:'Usuario Creado Con Exito' });
      }else{
          res.json({err:"El username ya existe"});
     }
