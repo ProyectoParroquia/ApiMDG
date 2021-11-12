@@ -36,6 +36,20 @@ Usuarios.init({
         }, */
         allowNull: false
     },
+    numeroContacto: {
+        type: DataTypes.STRING(13),
+        validate: {
+            isNumeric:{
+                 args: true,
+                msg:"Solo se permiten Numeros en Numero de contacto"
+            },
+            len: {
+                args: [7,13],
+                msg:"Numero de contacto con minimo 7 y max 13 caracteres"
+            }
+        },
+        allowNull: false
+    },
     
     correoUsuario: {
         type: DataTypes.STRING(40),
@@ -53,7 +67,7 @@ Usuarios.init({
     },
 
     numeroDocumentoUsuario: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING(13),
         validate: {
             isNumeric:{
                  args: true,

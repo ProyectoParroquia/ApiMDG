@@ -16,7 +16,11 @@ app.get('/', function (req, res) {
     res.json("Hola Mundo");
 });
 
-app.use('/api', require('./routes/api'));
+//Solucion A cors
+const cors = require('./helpers/CorsHelper')
+//referencia a la carpeta de rutas
+app.use('/api',cors,  require('./routes/api'));
+
 
 // Arrancamos el servidor
 app.listen(PORT, function () {

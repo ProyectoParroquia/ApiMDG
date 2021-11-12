@@ -8,9 +8,7 @@ const apiIncripcionRouter = require('./api/InscripcionRoute');
 const apiTipoCursoRouter = require('./api/TipoCursoRoute');
 const apiCursoRouter = require('./api/CursoRoute');
 const apitipoDocRouter = require('./api/tipoDoc');
-const apiServicioRouter = require('./api/servicio');
-const apiServicioUsuarioRouter = require('./api/serviUsu');
-const apiTipoServicioUsuarioRouter = require('./api/tipoServi');
+
 
 const middelware = require('./middelwares');
 
@@ -22,14 +20,12 @@ router.use('/Anuncio', apiAnuncioRouter);
 
 
 
-router.use('/usuarios'/* ,middelware.checkToken */, apiUsuariosRouter);
-router.use('/tipoUsuario'/* ,middelware.checkToken */, apitipoUsuarioRouter);
-router.use('/tipoDoc',/* middelware.checkToken, */ apitipoDocRouter);
+router.use('/usuarios', apiUsuariosRouter);
+router.use('/tipoUsuario', apitipoUsuarioRouter);
+router.use('/tipoDoc', apitipoDocRouter);
 router.use('/credenciales', apiCredencialesRouter);
 
-router.use('/servicio', apiServicioRouter);
-router.use('/serviUsu', apiServicioUsuarioRouter);
-router.use('/tipoServi', apiTipoServicioUsuarioRouter);
+
 
 
 
