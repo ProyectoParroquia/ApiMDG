@@ -54,7 +54,7 @@ router.post('/solicitudContra', async(req, res) => {
                 <h2>¡¡ CAMBIA AQUI TU CONTRASEÑA, ${usuario.nombreUsuario} !!</h2>
                 <hr>
                 
-                <p>Dar clic en el link para conpeltar el cambio de su contraseña</p>
+                <p>Dar clic en el link para compeltar el cambio de su contraseña</p>
                 <a href="http://localhost:8080/pages/RestablecerContra?tokenpass=${tokenLinkContra}">Crear Nueva Contraseña.</a>
             </div>
             `
