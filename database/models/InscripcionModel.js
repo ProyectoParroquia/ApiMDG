@@ -1,8 +1,9 @@
 const {Model,DataTypes}=require('sequelize');
 const sequelize=require('../db');
 const CursoModel = require('./CursoModel');
-const RequisitosModel = require('./RequisitosModel');
+const Estado = require('./EstadoModel');
 const Usuarios = require('./usuario');
+
 
 
 class InscripcionModel  extends Model {}
@@ -13,44 +14,34 @@ InscripcionModel.init({
         primaryKey:true,
         autoIncrement:true
     },
-    estadoInscripcion: {
-      type:DataTypes.STRING,
-      allowNull:false
-    },
+    idEstadoFK:{
+      type:DataTypes.INTEGER,
+      defaultValue: 1
+  },
+
+    fechaInscripcion:{
+      type:'TIMESTAMP',
+      defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
+  },
     idCursoFK: {
       type: DataTypes.INTEGER,
-     defaultValue: 3 
-  },
-    idUsuarioFK: {
-      type: DataTypes.INTEGER,
-    defaultValue: 3 
   }
 },
+
 {
     sequelize,
     modelName:'Inscripcion',
-     timestamps: false
+    timestamps: false,
+    freezeTableName: true
 });
-InscripcionModel.CursoModel = InscripcionModel.belongsTo(CursoModel, {foreignKey: "idCursoFK" });
+ InscripcionModel.belongsTo(CursoModel, {foreignKey: "idCursoFK" });
+  CursoModel.hasMany(InscripcionModel, {foreignKey: "idCursoFK" });
+  
+  InscripcionModel.belongsTo(Estado, {foreignKey: "idEstadoFK" });
+Estado.hasMany(InscripcionModel, { foreignKey: "idEstadoFK" });
 
-//mucho a mucho
-const InsRequi= sequelize.define('InsRequi', {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
-    allowNull: false
-  },
-  urlRequisito: DataTypes.STRING(2500)
-}, 
-{ timestamps: false });
-
-
-InscripcionModel.Usuarios = InscripcionModel.belongsTo(Usuarios, {foreignKey: "idUsuarioFK" });
-
-InscripcionModel.belongsToMany(RequisitosModel, {through: "InsRequi" });
-
-RequisitosModel.belongsToMany(InscripcionModel, {through: "InsRequi" });
+InscripcionModel.hasMany(Usuarios, { foreignKey: "UsuarioFK" });
+Usuarios.belongsTo(InscripcionModel, { foreignKey: "UsuarioFK" });
 
 
 module.exports=InscripcionModel;

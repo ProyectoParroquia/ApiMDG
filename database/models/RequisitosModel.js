@@ -11,7 +11,9 @@ RequisitosModel.init({
         autoIncrement:true
     },
     nombreRequisitos:{
-        type:DataTypes.STRING(20),
+        type:DataTypes.STRING(100),
+       
+        unique:true,
         allowNull:false
     }
 },
@@ -21,7 +23,6 @@ RequisitosModel.init({
      timestamps: false,
      freezeTableName: true
 });
-CursoModel.belongsToMany(RequisitosModel, {through: "Requisito_Curso" });
-RequisitosModel.belongsToMany(CursoModel, {through: "Requisito_Curso" });
+
 
 module.exports=RequisitosModel ;

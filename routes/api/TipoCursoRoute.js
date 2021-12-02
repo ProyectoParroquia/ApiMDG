@@ -1,9 +1,9 @@
 const express=require('express');
 const router=express.Router();
-const TipoCursoModel=require('../../database/Models/TipoCursoModel');
+const TipoCurso=require('../../database/models/TipoCursoModel');
 
 //Rutas
-//Metodo para Metodo de pago /api/MotodoDePago
+//Metodo para Metodo de pago /api
 router.get('/', async (req, res) => {
     const tipoCurso = await TipoCurso.findAll();
     res.json(tipoCurso);
@@ -17,7 +17,7 @@ router.post('/', async (req, res) => {
        
    });
    
-    res.json({  TipoCursoModel });
+   res.status(201).json({success:"Tipo Curso creado con exito"});
 });
 
 //READ -> /api/TipoCursoModel/:idTipoCurso
@@ -41,7 +41,7 @@ router.put('/:idTipoCurso', async(req, res) => {
         where: { idTipoCurso: req.params.idTipoCurso }
     });
     
-     res.json({success:"Tipo Curso Actualizado con exito"});
+    res.status(201).json({success:"Tipo Curso Actualizado con exito"});
 });
 
 
@@ -61,8 +61,8 @@ router.delete('/:idTipoCurso',(req,res)=>{
       where:{
         idTipoCurso: req.params.idTipoCurso
       }
-  }).then( TipoCursoDELETE=>{
-      res.json({succes: 'Tipo CURSO eliminado con exito'});
+  }).then(TipoCursoDELETE=>{
+    res.status(201).json({succes: 'Tipo CURSO eliminado con exito'});
   });
 });
 module.exports=router;

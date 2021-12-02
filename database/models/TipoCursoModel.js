@@ -11,13 +11,23 @@ TipoCursoModel.init({
     },
     nombreTipoCurso:{
         type:DataTypes.STRING(20),
-        allowNull:false
+        validate: {
+            isAlpha: {
+                args: true,
+               msg:"El campo Nombre solo debe tener Letras" 
+            }, 
+        },
+        unique:true,
+        allowNull:false,
+         freezeTableName: true
+       
     }
 },
 {
     sequelize,
     modelName:'TipoCurso',
-     timestamps: false
+     timestamps: false,
+     freezeTableName: true
 });
 
 module.exports=TipoCursoModel;

@@ -1,42 +1,164 @@
 const express=require('express');
+const CursoModel = require('../../database/models/CursoModel');
 const router=express.Router();
-const CursoModel=require('../../database/Models/CursoModel');
-const TipoCursoModel=require('../../database/Models/TipoCursoModel');
+const Curso=require('../../database/models/CursoModel');
+const TipoCurso=require('../../database/models/TipoCursoModel');
+const multer =require('multer');
+const path =require('path');
+
+const diskstorage = multer.diskStorage(
+    {
+        destination: path.join(__dirname,'../images'),
+        filename:(req, file,cb)=>{
+            cb(null,Date.now()+'_sacris_'+ file.originalname)
+
+        }
+    }
+)
+const fileUpload = multer({
+    storage: diskstorage,
+    fileFilter:(req,file,cb)=>{
+        const filetypes= /jpeg|jpg|png|gif|svg/;
+        const mimetype= filetypes.test(file.mimetype);
+        const extname = filetypes.test(path.extname(file.originalname));
+        if(mimetype && extname){
+            return cb(null, true);
+        }
+            console.log("error: solo se permiten archivos jpeg, jpg, png, gif y svg ");
+    }
+}).single('file')
+
 
 //Rutas
-
 router.get('/',async(req,res)=>{
-const CursoModel= await Curso.findAll(
+    const CursoModel= await Curso.findAll(
+  
+      {
+      where: {estadoCurso:'Activo'},
+      include: [
+          {
+              model: TipoCurso,
+              attributes: ['nombreTipoCurso']
+          }
+          ],
+      attributes: ['idCurso','nombreCurso','fechaInicialCurso','fechaFinalCurso','costoCurso','imagenCurso','descriCurso', 'estadoCurso']
+  
+  })
+  res.json(CursoModel);
+  });
+//sacramental
+router.get('/sacramental',async(req,res)=>{
+  const CursoModel= await Curso.findAll(
+
     {
-    where: {estadoCurso:'Activo' },
+    where: {estadoCurso:'Activo',idTipoCursoFK: 1 },
     include: [
         {
             model: TipoCurso,
             attributes: ['nombreTipoCurso']
         }
         ],
-    attributes: ['idCurso','estadoCurso','nombreCurso','fechaInicialCurso','fechaFinalCurso','costoCurso','imagenCurso']
-});
+    attributes: ['idCurso','nombreCurso','fechaInicialCurso','fechaFinalCurso','costoCurso','imagenCurso','descriCurso']
+
+})
 res.json(CursoModel);
 });
+//recreativos
+router.get('/recreativos',async(req,res)=>{
+    const CursoModel= await Curso.findAll(
+  
+      {
+      where: {estadoCurso:'Activo',idTipoCursoFK: 2 },
+      include: [
+          {
+              model: TipoCurso,
+              attributes: ['nombreTipoCurso']
+          }
+          ],
+      attributes: ['idCurso','nombreCurso','fechaInicialCurso',
+      'fechaFinalCurso','costoCurso','imagenCurso','descriCurso']
+  
+  })
+  res.json(CursoModel);
+  });
+//hola Universo de las imageenes
+router.get('/c',async(req,res)=>{
+    const CursoModel= await Curso.count(
+        {
+        where: {estadoCurso:'Activo'}
+        }
+    )
+  res.json(CursoModel);
+});
+router.get('/i',async(req,res)=>{
+    const CursoModel= await Curso.count(
+        {
+        where: {estadoCurso:'Inactivo'}
+        }
+    )
+  res.json(CursoModel);
+});
+router.get('/r',async(req,res)=>{
+    const CursoModel= await Curso.count(
+  
+      {
+      where: {estadoCurso:'Activo',idTipoCursoFK: 2 },
+  
+  })
+  res.json(CursoModel);
+  });
+  router.get('/s',async(req,res)=>{
+    const CursoModel= await Curso.count(
+  
+      {
+      where: {estadoCurso:'Activo',idTipoCursoFK: 1 },
+  
+  })
+  res.json(CursoModel);
+  });
+//consultar por inactivo
+router.get('/inactivos',async(req,res)=>{
+    const CursoModel= await Curso.findAll(
+        {
+        where: {estadoCurso:'Inactivo'},
+        include: [
+            {
+                model: TipoCurso,
+                attributes: ['nombreTipoCurso']
+            }
+            ],
+        attributes: ['idCurso','nombreCurso','fechaInicialCurso','fechaFinalCurso','costoCurso','imagenCurso','descriCurso']
+    });
+    res.json(CursoModel);
+       });
+       
 
-
-router.post('/', async (req, res) => {
-     
-    const  CursoModel = await Curso.create(  {
-        
-        estadoCurso:req.body.estadoCurso,
+router.post('/',fileUpload,async (req, res) => {
+     console.log(req.file)
+     const imagenCurso= req.file.filename;
+  
+      await   Curso.create({
         nombreCurso:req.body.nombreCurso,
         fechaInicialCurso:req.body.fechaInicialCurso,
         fechaFinalCurso:req.body.fechaFinalCurso,
         costoCurso:req.body.costoCurso,
-        imagenCurso:req.body.imagenCurso,
-        idTipoCursoFK:req.body. idTipoCursoFK
-    });
-    
-         res.json(CursoModel);
-          
-     });
+        descriCurso:req.body.descriCurso,
+        imagenCurso:imagenCurso,
+        idTipoCursoFK:req.body.idTipoCursoFK
+     
+    })
+
+    /* sequelize.query(
+        'INSERT INTO curso ser ? '[{nombreCurso:'',costoCurso:'',fechaInicialCurso:'',fechaInicialCurso:'',
+        imagenCurso:imagenCurso,idTipoCursoFK:''}],
+        { type: sequelize.QueryTypes.INSERT }
+    ).then(function (cursoInsertId) {
+        console.log(cursoInsertId);
+    });*/
+    res.status(201).json({success:"curso creado con exito"});
+     
+});
+
     
  
 //READ -
@@ -52,15 +174,15 @@ router.get('/:idCurso', (req, res) => {
     });
 });
 
-//UPDATE  /api/DonacionEconomica/:idDonacionEconomica
+//UPDATE  
 router.put('/:idCurso',(req,res)=>{
     Curso.update({
-        estadoCurso:req.body.estadoCurso,
         nombreCurso:req.body.nombreCurso,
         fechaInicialCurso:req.body.fechaInicialCurso,
         fechaFinalCurso:req.body.fechaFinalCurso,
         costoCurso:req.body.costoCurso,
         imagenCurso:req.body.imagenCurso,
+        descriCurso:req.body.descriCurso,
         idTipoCursoFK:req.body. idTipoCursoFK
      
     },{
@@ -68,18 +190,38 @@ router.put('/:idCurso',(req,res)=>{
             idCurso:req.params.idCurso
         }
     }).then(cursoPUT=>{
-        res.json(cursoPUT);
+        res.status(201).json({success:"Curso Actualizado con exito"});
     });
 });
+//Activar e inactivar
+// INHABILITAR
+router.put('/inhabilitar/:idCurso', async(req, res) => {
+    const CursoModel = await Curso.update({
+        estadoCurso : 'Inactivo'
+    }, {
+        where: { idCurso: req.params.idCurso }
+    });
 
+    res.status(201).json({success: 'El curso a sido inactivado'});
+});
+// Activar
+router.put('/activar/:idCurso', async(req, res) => {
+    const CursoModel  = await Curso.update({
+        estadoCurso : 'Activo'
+    }, {
+        where: { idCurso: req.params.idCurso }
+    });
+    
+    res.status(201).json({success: 'El curso a sido activado'});
+});
 //DELETE /api/DonacionEconomica/:idDonacionEconomica
 router.delete('/:idCurso',(req,res)=>{
     Curso.destroy({
         where:{
             idCurso:req.params.idCurso
         }
-    }).then(cursoDELETE=>{
-        res.json(cursoDELETE);
+    }).then(CursoDELETE=>{
+        res.status(201).json({success:"Curso eliminado con exito"});
     });
 });
 

@@ -13,7 +13,7 @@ router.get('/id/:idTiUsuario', async (req, res) => {
 })
 
 //consultar todos los tipoUsuario
-router.get('/', async (req, res) => {
+router.get('/si', async (req, res) => {
     const tipoUsuario = await TipoUsu.findAll().catch(err=>{
        
         res.json({mensage:"error al Consultar los Tipos de Usuarios",err});

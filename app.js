@@ -1,6 +1,16 @@
 const express = require('express');
 const app = express();
 const sequelize = require('./database/db');
+const path =require('path');
+
+//solucion a CORS
+const cors  = require('cors')
+app.use(cors())
+
+app.use(express.static(path.join(__dirname,'img')));
+
+app.use(express.static(path.join(__dirname,'requisitos')))
+require('dotenv').config();
 
 
 // Setting
@@ -16,10 +26,11 @@ app.get('/', function (req, res) {
     res.json("Hola Mundo");
 });
 
-//Solucion A cors
+/* //Solucion A cors
 const cors = require('./helpers/CorsHelper')
 //referencia a la carpeta de rutas
-app.use('/api',cors,  require('./routes/api'));
+ */
+app.use('/api', require('./routes/api'));
 
 
 // Arrancamos el servidor

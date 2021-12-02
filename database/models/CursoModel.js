@@ -1,8 +1,6 @@
-const {Model,DataTypes}=require('sequelize');
+const {Model,DataTypes, Error}=require('sequelize');
 const sequelize=require('../db');
 const TipoCurso = require('./TipoCursoModel');
-
-
 
 class CursoModel extends Model {}
 
@@ -14,22 +12,44 @@ CursoModel.init({
     },
     estadoCurso:{
         type:DataTypes.STRING,
-        allowNull:false
+        defaultValue: "Activo"
     },
     nombreCurso:{
         type:DataTypes.STRING,
+        unique : true,
         allowNull:false,
-        unique : true
+        
+    },
+     descriCurso:{
+        type:DataTypes.STRING,
+        unique : true,
+        allowNull:false,
+        
     },
     fechaInicialCurso:{
-        type:DataTypes.DATE,
+        type:DataTypes.DATEONLY,
         allowNull:false,
-        unique : false
+        unique : false,
+        validate:{
+            isDate:{
+                args:true,
+                msg:"la fecha debe estar en formato yy-mm-dd"
+            },
+           }
     },
     fechaFinalCurso:{
-        type:DataTypes.DATE,
+        type:DataTypes.DATEONLY,
         allowNull:false,
-        unique : false
+        unique : false,
+        validate:{
+            isDate:{
+                args:true,
+                msg:"la fecha debe estar en formato yy-mm-dd"
+
+            },
+           
+           
+        }
     },
     costoCurso:{
         type:DataTypes.FLOAT,
@@ -37,21 +57,24 @@ CursoModel.init({
         validate:{
             isFloat:{
                 args:true,
-                msg:"El COSTO DEL CURSO tiene que ser un numero"
+                msg:"El COSTO DEL CURSO tiene que ser un numero",
+                
             },
-            // min:{
-            //     args:1000
-            // }
-        }
+             min:{
+             args:60000,
+             msg:"El COSTO DEL CURSO debe ser mayor a 60mil"
+         },
+        
+         }
+        
     },
     imagenCurso:{
         type:DataTypes.STRING,
-        allowNull:false,
-        unique : true
+        allowNull:false
     },
     idTipoCursoFK: {
         type: DataTypes.INTEGER,
-       defaultValue: 3 
+       defaultValue: 1 
     }
 },
 
@@ -59,12 +82,11 @@ CursoModel.init({
     sequelize,
     modelName:'Curso',
     timestamps: false,
-    
+     freezeTableName: true
 });
 
 
-CursoModel.TipoCurso = CursoModel.belongsTo(TipoCurso, {foreignKey: "idTipoCursoFK" });
+CursoModel.belongsTo(TipoCurso, {foreignKey: "idTipoCursoFK" });
+TipoCurso.hasMany(CursoModel, {foreignKey: "idTipoCursoFK" });
 //mucho a mucho
-
-
 module.exports=CursoModel;
