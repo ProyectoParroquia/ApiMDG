@@ -16,20 +16,23 @@ CursoModel.init({
     },
     nombreCurso:{
         type:DataTypes.STRING,
-        unique : true,
+         unique: {
+            args: true,
+            msg:"El nombre de curso ya existe"
+        } ,
         allowNull:false,
         
     },
      descriCurso:{
         type:DataTypes.STRING,
-        unique : true,
+        
         allowNull:false,
         
     },
     fechaInicialCurso:{
         type:DataTypes.DATEONLY,
         allowNull:false,
-        unique : false,
+        
         validate:{
             isDate:{
                 args:true,
@@ -40,7 +43,6 @@ CursoModel.init({
     fechaFinalCurso:{
         type:DataTypes.DATEONLY,
         allowNull:false,
-        unique : false,
         validate:{
             isDate:{
                 args:true,

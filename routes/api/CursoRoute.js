@@ -5,6 +5,7 @@ const Curso=require('../../database/models/CursoModel');
 const TipoCurso=require('../../database/models/TipoCursoModel');
 const multer =require('multer');
 const path =require('path');
+const middelware = require('../middelwares');
 
 const diskstorage = multer.diskStorage(
     {
@@ -64,7 +65,7 @@ router.get('/sacramental',async(req,res)=>{
 res.json(CursoModel);
 });
 //recreativos
-router.get('/recreativos',async(req,res)=>{
+router.get('/recreativo',async(req,res)=>{
     const CursoModel= await Curso.findAll(
   
       {
@@ -116,11 +117,11 @@ router.get('/r',async(req,res)=>{
   })
   res.json(CursoModel);
   });
-//consultar por inactivo
-router.get('/inactivos',async(req,res)=>{
+//consultar por inactivo (Sacramental)
+router.get('/inactivos/sacramental',middelware.checkToken, middelware.comprobarFeligres, async (req, res) => {
     const CursoModel= await Curso.findAll(
         {
-        where: {estadoCurso:'Inactivo'},
+        where: {estadoCurso:'Inactivo', idTipoCursoFK: 1},
         include: [
             {
                 model: TipoCurso,
@@ -132,8 +133,23 @@ router.get('/inactivos',async(req,res)=>{
     res.json(CursoModel);
        });
        
+//consultar por inactivo (Recreativo)
+router.get('/inactivos/recreativo',middelware.checkToken,middelware.comprobarFeligres,async(req,res)=>{
+    const CursoModel= await Curso.findAll(
+        {
+        where: {estadoCurso:'Inactivo', idTipoCursoFK: 2},
+        include: [
+            {
+                model: TipoCurso,
+                attributes: ['nombreTipoCurso']
+            }
+            ],
+        attributes: ['idCurso','nombreCurso','fechaInicialCurso','fechaFinalCurso','costoCurso','imagenCurso','descriCurso']
+    });
+    res.json(CursoModel);
+       });
 
-router.post('/',fileUpload,async (req, res) => {
+router.post('/',fileUpload,middelware.checkToken,middelware.comprobarFeligres,async (req, res) => {
      console.log(req.file)
      const imagenCurso= req.file.filename;
   
@@ -147,6 +163,10 @@ router.post('/',fileUpload,async (req, res) => {
         idTipoCursoFK:req.body.idTipoCursoFK
      
     })
+         res.status(201).json({success:"curso creado con exito"});
+   
+   
+    
 
     /* sequelize.query(
         'INSERT INTO curso ser ? '[{nombreCurso:'',costoCurso:'',fechaInicialCurso:'',fechaInicialCurso:'',
@@ -155,7 +175,7 @@ router.post('/',fileUpload,async (req, res) => {
     ).then(function (cursoInsertId) {
         console.log(cursoInsertId);
     });*/
-    res.status(201).json({success:"curso creado con exito"});
+  
      
 });
 
@@ -175,7 +195,7 @@ router.get('/:idCurso', (req, res) => {
 });
 
 //UPDATE  
-router.put('/:idCurso',(req,res)=>{
+router.put('/:idCurso',middelware.checkToken,middelware.comprobarFeligres,(req,res)=>{
     Curso.update({
         nombreCurso:req.body.nombreCurso,
         fechaInicialCurso:req.body.fechaInicialCurso,
@@ -195,7 +215,7 @@ router.put('/:idCurso',(req,res)=>{
 });
 //Activar e inactivar
 // INHABILITAR
-router.put('/inhabilitar/:idCurso', async(req, res) => {
+router.put('/inhabilitar/:idCurso',middelware.checkToken,middelware.comprobarFeligres, async(req, res) => {
     const CursoModel = await Curso.update({
         estadoCurso : 'Inactivo'
     }, {
@@ -205,7 +225,7 @@ router.put('/inhabilitar/:idCurso', async(req, res) => {
     res.status(201).json({success: 'El curso a sido inactivado'});
 });
 // Activar
-router.put('/activar/:idCurso', async(req, res) => {
+router.put('/activar/:idCurso',middelware.checkToken,middelware.comprobarFeligres, async(req, res) => {
     const CursoModel  = await Curso.update({
         estadoCurso : 'Activo'
     }, {
@@ -214,8 +234,8 @@ router.put('/activar/:idCurso', async(req, res) => {
     
     res.status(201).json({success: 'El curso a sido activado'});
 });
-//DELETE /api/DonacionEconomica/:idDonacionEconomica
-router.delete('/:idCurso',(req,res)=>{
+//DELETE
+router.delete('/:idCurso',middelware.checkToken,middelware.comprobarFeligres,(req,res)=>{
     Curso.destroy({
         where:{
             idCurso:req.params.idCurso

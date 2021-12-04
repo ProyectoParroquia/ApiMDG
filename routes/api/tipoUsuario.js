@@ -23,7 +23,7 @@ router.get('/si', async (req, res) => {
 
 
 // CREATE 
-router.post('/',middelware.comprobarFeligres, async (req, res) => {
+router.post('/',middelware.checkToken,middelware.comprobarFeligres, async (req, res) => {
      
    const tipoUsuario = await TipoUsu.create(  {
        nombreTipoUsuario: req.body.nombreTipoUsuario,
@@ -37,7 +37,7 @@ router.post('/',middelware.comprobarFeligres, async (req, res) => {
 });
 
 // UPDATE
-router.put('/actualizar/:idTiUsuario',middelware.comprobarFeligres, async(req, res) => {
+router.put('/actualizar/:idTiUsuario',middelware.checkToken,middelware.comprobarFeligres, async(req, res) => {
     const tipoUsuario = await TipoUsu.update({
         nombreTipoUsuario: req.body.nombreTipoUsuario,
         
@@ -53,7 +53,7 @@ router.put('/actualizar/:idTiUsuario',middelware.comprobarFeligres, async(req, r
 
 
 
-router.delete('/:idTiUsuario',middelware.comprobarFeligres, async(req, res) => {
+router.delete('/:idTiUsuario',middelware.checkToken,middelware.comprobarFeligres, async(req, res) => {
     await TipoUsu.destroy({
         where: { idTipoUsuario: req.params.idTiUsuario}
     }).catch(err=>{

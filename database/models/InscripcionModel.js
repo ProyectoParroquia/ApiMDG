@@ -40,8 +40,8 @@ InscripcionModel.init({
   InscripcionModel.belongsTo(Estado, {foreignKey: "idEstadoFK" });
 Estado.hasMany(InscripcionModel, { foreignKey: "idEstadoFK" });
 
-InscripcionModel.hasMany(Usuarios, { foreignKey: "UsuarioFK" });
-Usuarios.belongsTo(InscripcionModel, { foreignKey: "UsuarioFK" });
+InscripcionModel.belongsTo(Usuarios, {foreignKey: "idUsuarioFK" });
+Usuarios.hasMany(InscripcionModel, { foreignKey: "idUsuarioFK" });
 
 
 module.exports=InscripcionModel;

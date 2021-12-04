@@ -2,9 +2,11 @@
 const router = require('express').Router();
 
 const moment = require('moment');
+const Curso=require('../../database/models/CursoModel');
 const Usuarios = require('../../database/models/usuario');
 const Credenciales = require('../../database/models/credenciales');
 const TipoUsu = require('../../database/models/tipoUsuario');
+const Inscripcion =require('../../database/models/InscripcionModel');
 const bcrypt = require('bcryptjs');
 const tipoDoc = require('../../database/models/tipoDoc');
 const helperEmail = require('../../helpers/SendEmailHelper')
@@ -45,7 +47,7 @@ router.get('/perfil', middelware.checkToken, async (req, res) => {
 })
 
 //consultar todos los usuarios
-router.get('/'/* ,middelware.checkToken,middelware.comprobarFeligres */, async (req, res) => {
+router.get('/',middelware.checkToken,middelware.comprobarFeligres, async (req, res) => {
     const usuarios = await Usuarios.findAll(
         {
         where: {estadoUsuario:'Activo' },
@@ -60,8 +62,15 @@ router.get('/'/* ,middelware.checkToken,middelware.comprobarFeligres */, async (
             {
                 model: tipoDoc,
                 attributes: ['denominacionTipoDocumento']    
-            }
-            ],
+            },
+            { model: Inscripcion ,
+                attributes: ['fechaInscripcion', 'idCursoFK'],
+                include: [
+                    {   model: Curso,
+                        attributes: ['nombreCurso','fechaInicialCurso','fechaFinalCurso','costoCurso','imagenCurso']
+                    }
+                ]
+            }],
         attributes: ['idUsuario','nombreUsuario','apellidoUsuario','correoUsuario','numeroContacto','numeroDocumentoUsuario','fechaNacimientoUsuario']
     }).catch(err=>{
        
@@ -97,7 +106,6 @@ router.get('/inactivos',middelware.checkToken,middelware.comprobarFeligres, asyn
      res.json(usuarios);
 });
 
-
 // CREATE 
 router.post('/', async (req, res) => {
     let passSinEncriptar = req.body.password
@@ -115,8 +123,7 @@ router.post('/', async (req, res) => {
        fechaNacimientoUsuario: req.body.fechaNacimientoUsuario,
        idTipoDoc_FK: req.body.idTipoDoc_FK
    }).catch(err=>{
-       
-        res.json({mensage:"error al crear el Usuario",err});
+          res.json({mensage:"error al crear el Usuario",err});
    });
    const credencial = Credenciales.create({
        username: req.body.username,
@@ -144,11 +151,20 @@ router.post('/', async (req, res) => {
      }else{
          res.json({err:"El username ya existe"});
     }
-    });
+});
+    
+//
 
-
+    router.get('/obtener-params', middelware.checkToken, (req, res) => {
+        let params = {
+            idUsu:req.idUsu,
+            nombre:req.nombreUsu,
+            tipoUsuario:req.tipoUsuario,
+        }
+         res.json(params);
+    })
 // UPDATE
-router.put('/actualizar/:idUsuario', async (req, res) => {
+router.put('/actualizar/:idUsuario', middelware.checkToken, async (req, res) => {
 
     const usuario = await Usuarios.update({
         nombreUsuario: req.body.nombreUsuario,
@@ -175,7 +191,7 @@ router.put('/actualizar/:idUsuario', async (req, res) => {
 });
 
 //CAMBIAR TIPO USU
-router.put('/tipoUsu/:idUsuario',/* middelware.comprobarFeligres,  */async(req, res) => {
+router.put('/tipoUsu/:idUsuario',async(req, res) => {
     const usuario = await Usuarios.update({
         idTipoUsuario_FK: req.body.idTipoUsuario_FK
     }, {
@@ -191,7 +207,7 @@ router.put('/tipoUsu/:idUsuario',/* middelware.comprobarFeligres,  */async(req, 
 
 
 // INHABILITAR
-router.put('/inhabilitar/:idUsuario',middelware.comprobarFeligres, async(req, res) => {
+router.put('/inhabilitar/:idUsuario', middelware.checkToken, async(req, res) => {
     const usuario = await Usuarios.update({
         estadoUsuario : 'Inactivo'
     }, {
@@ -206,7 +222,7 @@ router.put('/inhabilitar/:idUsuario',middelware.comprobarFeligres, async(req, re
      res.status(201).json({success: 'El Usuario a sido inactivado'});
 });
 // Activar
-router.put('/activar/:idUsuario',middelware.comprobarFeligres, async(req, res) => {
+router.put('/activar/:idUsuario', middelware.checkToken, async(req, res) => {
     const usuario = await Usuarios.update({
         estadoUsuario : 'Activo'
     }, {

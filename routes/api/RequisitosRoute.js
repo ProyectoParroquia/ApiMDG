@@ -1,7 +1,7 @@
 const express=require('express');
 const router=express.Router();
 const Requisito = require('../../database/models/RequisitosModel');
-
+const middelware = require('../middelwares');
 //Rutas
 
 //router.get('/',(req,res)=>{
@@ -17,7 +17,7 @@ router.get('/', async (req, res) => {
 
 //CREATE
 
-router.post('/', async (req, res) => {
+router.post('/',middelware.checkToken,middelware.comprobarFeligres, async (req, res) => {
      
     const RequisitosModel = await Requisito.create(  {
         nombreRequisitos:req.body.nombreRequisitos
@@ -43,7 +43,7 @@ router.get('/:idRequisitos', async (req, res) => {
     res.json(Requisitos);
 });
 //UPDATE /api/MetodoDePago/:idMetodoPago
-router.put('/:idRequisitos', async(req, res) => {
+router.put('/:idRequisitos',middelware.checkToken,middelware.comprobarFeligres, async(req, res) => {
     const RequisitosModel = await Requisito.update({
         nombreRequisitos:req.body.nombreRequisitos
         
@@ -66,7 +66,7 @@ router.put('/:idRequisitos', async(req, res) => {
     });
 });
 */
-router.delete('/:idRequisitos', async(req, res) => {
+router.delete('/:idRequisitos',middelware.checkToken,middelware.comprobarFeligres, async(req, res) => {
     await Requisito.destroy({
         where: { idRequisitos: req.params.idRequisitos}
     });

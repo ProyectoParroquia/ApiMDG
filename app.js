@@ -7,9 +7,9 @@ const path =require('path');
 const cors  = require('cors')
 app.use(cors())
 
-app.use(express.static(path.join(__dirname,'img')));
+app.use(express.static(path.join(__dirname,'./routes/images')));
 
-app.use(express.static(path.join(__dirname,'requisitos')))
+app.use(express.static(path.join(__dirname,'./routes/requisitos')))
 require('dotenv').config();
 
 

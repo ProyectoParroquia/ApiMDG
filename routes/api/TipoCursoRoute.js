@@ -1,16 +1,15 @@
 const express=require('express');
 const router=express.Router();
 const TipoCurso=require('../../database/models/TipoCursoModel');
-
+const middelware = require('../middelwares');
 //Rutas
-//Metodo para Metodo de pago /api
 router.get('/', async (req, res) => {
     const tipoCurso = await TipoCurso.findAll();
     res.json(tipoCurso);
 });
 
 //crearrrrrrrrrrrrrrrrr
-router.post('/', async (req, res) => {
+router.post('/',middelware.checkToken,middelware.comprobarFeligres, async (req, res) => {
      
    const TipoCursoModel = await TipoCurso.create(  {
     nombreTipoCurso: req.body.nombreTipoCurso,
@@ -33,7 +32,7 @@ router.get('/:idTipoCurso', async (req, res) => {
 });
 
 // UPDATE
-router.put('/:idTipoCurso', async(req, res) => {
+router.put('/:idTipoCurso',middelware.checkToken,middelware.comprobarFeligres, async(req, res) => {
     const  TipoCursoModel = await TipoCurso.update({
         nombreTipoCurso: req.body.nombreTipoCurso,
         
@@ -56,7 +55,7 @@ router.put('/:idTipoCurso', async(req, res) => {
     //});
 //});
 
-router.delete('/:idTipoCurso',(req,res)=>{
+router.delete('/:idTipoCurso',middelware.checkToken,middelware.comprobarFeligres,(req,res)=>{
   TipoCurso.destroy({
       where:{
         idTipoCurso: req.params.idTipoCurso

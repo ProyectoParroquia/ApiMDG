@@ -3,7 +3,8 @@ const router=express.Router();
 const Curso=require('../../database/models/CursoModel');
 const Requisito=require('../../database/models/RequisitosModel');
 const CursoRequisito=require('../../database/models/CursoRequisitoModel');
-const InscriRequi=require('../../database/models/InscriRequiModel');
+const InscriRequi = require('../../database/models/InscriRequiModel');
+const middelware = require('../middelwares');
 
 //Rutas
 
@@ -26,10 +27,10 @@ res.json(CursoRequisitoModel);
 });
 
 
-router.post('/', async (req, res) => {
+router.post('/', middelware.checkToken,middelware.comprobarFeligres, async (req, res) => {
      
  
-    const  CursoRequisitoModel = await CursoRequisito.create(  {
+    await CursoRequisito.create(  {
         
         idCursoFK:req.body.idCursoFK,
         idRequisitosFK:req.body.idRequisitosFK,
@@ -60,8 +61,8 @@ router.get('/:idCursoRequisito', (req, res) => {
     });
 });
 
-//UPDATE  /api/DonacionEconomica/:idDonacionEconomica
-router.put('/:idCursoRequisito',(req,res)=>{
+//UPDATE  
+router.put('/:idCursoRequisito', middelware.checkToken,middelware.comprobarFeligres,(req,res)=>{
     CursoRequisito.update({
         idCursoFK:req.body.idCursoFK,
         idRequisitosFK:req.body.idRequisitosFK
@@ -75,8 +76,8 @@ router.put('/:idCursoRequisito',(req,res)=>{
     });
 });
 
-//DELETE /api/DonacionEconomica/:idDonacionEconomica
-router.delete('/:idCursoRequisito',(req,res)=>{
+//DELETE 
+router.delete('/:idCursoRequisito',middelware.checkToken,middelware.comprobarFeligres,(req,res)=>{
     CursoRequisito.destroy({
         where:{
             idCursoRequisito:req.params.idCursoRequisito

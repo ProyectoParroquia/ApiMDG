@@ -9,7 +9,7 @@ const multer =require('multer');
 const path =require('path');
 const fs =require('fs');
 const sequelize = require('../../database/db');
-
+const middelware = require('../middelwares');
 const diskstorage = multer.diskStorage(
     {
         destination: path.join(__dirname,'../requisitos'),
@@ -75,7 +75,7 @@ router.get('/requi',async(req,res)=>{
             res.json(requisitos);
             })
 });
-router.post('/',fileUpload,async (req, res) => {
+router.post('/',middelware.checkToken,middelware.comprobarFeligres,fileUpload,async (req, res) => {
     console.log(req.file)
     const urlRequisito= req.file.filename;
      
@@ -109,8 +109,8 @@ router.get('/:idInscriRequi', (req, res) => {
     });
 });
 
-//UPDATE  /api/DonacionEconomica/:idDonacionEconomica
-router.put('/:idInscriRequi',(req,res)=>{
+
+router.put('/:idInscriRequi',middelware.checkToken,middelware.comprobarFeligres,(req,res)=>{
     InscriRequi.update({
         urlRequisito:req.body.urlRequisito,
         idCursoRequisitoFK:req.body.idCursoRequisitoFK
@@ -125,7 +125,7 @@ router.put('/:idInscriRequi',(req,res)=>{
 });
 
 //DELETE /api/DonacionEconomica/:idDonacionEconomica
-router.delete('/:idInscriRequi',(req,res)=>{
+router.delete('/:idInscriRequi',middelware.checkToken,middelware.comprobarFeligres,(req,res)=>{
     InscriRequi.destroy({
         where:{
             idInscriRequi:req.params.idInscriRequi

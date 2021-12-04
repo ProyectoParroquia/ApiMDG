@@ -20,7 +20,7 @@ router.get('/', async (req, res) => {
 
 
 // CREATE 
-router.post('/',middelware.comprobarFeligres, async (req, res) => {
+router.post('/',middelware.checkToken,middelware.comprobarFeligres, async (req, res) => {
      
    const tipoDocumento = await TipoDoc.create(  {
        denominacionTipoDocumento: req.body.denominacionTipoDocumento,
@@ -34,7 +34,7 @@ router.post('/',middelware.comprobarFeligres, async (req, res) => {
 });
 
 // UPDATE
-router.put('/actualizar/:idTiDoc',middelware.comprobarFeligres, async(req, res) => {
+router.put('/actualizar/:idTiDoc',middelware.checkToken,middelware.comprobarFeligres, async(req, res) => {
     const tipoDocumento = await TipoDoc.update({
         denominacionTipoDocumento: req.body.denominacionTipoDocumento,
         
@@ -48,7 +48,7 @@ router.put('/actualizar/:idTiDoc',middelware.comprobarFeligres, async(req, res) 
      res.status(201).json({success:"Tipo Documento Actualizado con exito"});
 });
 
-router.delete('/:idTiDoc',middelware.comprobarFeligres, async(req, res) => {
+router.delete('/:idTiDoc',middelware.checkToken,middelware.comprobarFeligres, async(req, res) => {
     await TipoDoc.destroy({
         where: { idTipoDocumento: req.params.idTiDoc}
     }).catch(err=>{

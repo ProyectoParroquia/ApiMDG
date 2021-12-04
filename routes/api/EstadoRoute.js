@@ -1,6 +1,7 @@
 const express=require('express');
 const router=express.Router();
-const Estado=require('../../database/models/EstadoModel');
+const Estado = require('../../database/models/EstadoModel');
+const middelware = require('../middelwares');
 
 //Rutas
 //Metodo para Metodo de pago /api/MotodoDePago
@@ -11,7 +12,7 @@ router.get('/', async (req, res) => {
 });
 
 //crearrrrrrrrrrrrrrrrr
-router.post('/', async (req, res) => {
+router.post('/',middelware.checkToken,middelware.comprobarFeligres, async (req, res) => {
      
    await Estado.create(  {
     nombreEstado: req.body.nombreEstado,
@@ -37,7 +38,7 @@ router.get('/:idEstado', async (req, res) => {
 });
 
 // UPDATE
-router.put('/:idEstado', async(req, res) => {
+router.put('/:idEstado',middelware.checkToken,middelware.comprobarFeligres, async(req, res) => {
     const  EstadoModel = await Estado.update({
         nombreEstado: req.body.nombreEstado,
         
@@ -49,18 +50,7 @@ router.put('/:idEstado', async(req, res) => {
 });
 
 
-
-//DELETE /api/MetodoDePago/:idMetodoPago
-//router.delete('/:idEstado',(req,res)=>{
-  //    where:{
-    //        idEstado:req.params.idEstado
-     //   }
-    //}).then(EstadoDELETE =>{
-      //  res.json(EstadoDELETE);
-    //});
-//});
-
-router.delete('/:idEstado',(req,res)=>{
+router.delete('/:idEstado',middelware.checkToken,middelware.comprobarFeligres,(req,res)=>{
   Estado.destroy({
       where:{
         idEstado: req.params.idEstado
