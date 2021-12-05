@@ -42,6 +42,24 @@ router.get('/', async(req, res) => {
    
      res.json(anuncio);
 });
+//consultar los 10 primeros anuncios 
+router.get('/solo-diez', async(req, res) => {
+    const anuncio = await Anuncio.findAll(
+        {
+            where: {estadoAnuncio:'Activo' },
+            include: [{
+                model: Usuarios,
+                attributes: ['nombreUsuario']
+                }],
+            order: ['fechaInicio','fechaFinal'],
+            limit:6,
+        attributes: ['idAnuncio','tituloAnuncio','estadoAnuncio','mensajeAnuncio','fechaInicio','fechaFinal','imagenAnuncio']
+    });
+   
+     res.json(anuncio);
+});
+
+
 router.get('/id/:idAnuncio', async (req, res) => {
     const anuncio = await Anuncio.findByPk(req.params.idAnuncio, {
         include: {
