@@ -5,8 +5,8 @@ const enviarCorreo = (para, asunto, msj) => {
     host: 'smtp.mailtrap.io',
     port: '2525',
     auth: {
-      user: "c642c32281dbe5",
-      pass: "baacf99e677b82",
+      user: "07bf50c103a1df",
+      pass: "ca2217632cf570",
     },
   });
 
