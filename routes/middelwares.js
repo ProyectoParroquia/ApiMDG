@@ -4,7 +4,7 @@ const moment = require('moment');
 const checkToken = (req, res, next) => {
 
     if (!req.headers['token']) {
-        return  res.status(403).json({error: "Necesitas incluir el token"});
+        return  res.status(400).json({error: "Necesitas incluir el token"});
     }
 
     const token = req.headers['token'];
@@ -18,7 +18,7 @@ const checkToken = (req, res, next) => {
     }
 
     if (payload.expiredAt < moment().unix()) {
-        return  res.status(403).json({error:`¡Lo sentimos! Inicia sesion nuevamente, el tiempo limite de actividad ha terminado`});
+        return  res.status(400).json({error:`¡Lo sentimos! Inicia sesion nuevamente, el tiempo limite de actividad ha terminado`});
     }
 
     req.idUsu = payload.idUsu;
