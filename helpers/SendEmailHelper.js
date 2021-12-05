@@ -2,15 +2,17 @@ const nodemailer = require("nodemailer");
 
 const enviarCorreo = (para, asunto, msj) => {
   const transporter = nodemailer.createTransport({
-    service: "gmail",
+    host: 'smtp.ethereal.email',
+    port: '587',
+    secure: false,
     auth: {
-      user: "sacris2021@gmail.com",
-      pass: "07032004E",
+      user: "fmwpnowiyubo336t@ethereal.email",
+      pass: "KnX6GxzuNAUUykuUc8",
     },
   });
 
     const mailOptions = {
-        from: "sacris2021@gmail.com",
+        from: "Sacris",
         to: para,
         subject: asunto,
         html: msj,
