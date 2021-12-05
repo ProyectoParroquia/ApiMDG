@@ -42,8 +42,8 @@ router.get('/', async(req, res) => {
    
      res.json(anuncio);
 });
-//consultar los 10 primeros anuncios 
-router.get('/solo-diez', async(req, res) => {
+//consultar los 6 primeros anuncios 
+router.get('/solo-seis', async(req, res) => {
     const anuncio = await Anuncio.findAll(
         {
             where: {estadoAnuncio:'Activo' },
