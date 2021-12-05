@@ -59,7 +59,6 @@ router.get('/sacramental',async(req,res)=>{
             attributes: ['nombreTipoCurso']
         }
         ],
-    attributes: ['idCurso','nombreCurso','fechaInicialCurso','fechaFinalCurso','costoCurso','imagenCurso','descriCurso']
 
 })
 res.json(CursoModel);
